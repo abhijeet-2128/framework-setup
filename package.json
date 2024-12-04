@@ -1,0 +1,19 @@
+{
+  "name": "framework-setup",
+  "version": "1.0.0",
+  "description": "CLI tool to set up Express, Koa, Hapi, or Nest projects",
+  "main": "index.js",
+  "bin": {
+    "framework-setup": "./index.js"
+  },
+  "dependencies": {
+    "execa": "^6.1.0",
+    "inquirer": "^9.0.0"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Abhijeet Srivastava",
+  "license": "MIT",
+  "type": "module"
+}
