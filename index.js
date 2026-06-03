@@ -40,7 +40,7 @@ async function setupFramework() {
 
   switch (framework) {
     case 'Express':
-      await new MyExpress().setupExpress(projectDir);
+      await new MyExpress().setupExpress(projectDir, database);
       break;
     case 'Koa':
       await new MyKoa().setupKoa(projectDir,database);
