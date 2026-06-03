@@ -3,14 +3,28 @@ import { execa } from 'execa';
 import fs from 'fs';
 
 class MyExpress {
-  async setupExpress(projectDir) {
+  async setupExpress(projectDir, database) {
     console.log('Setting up Express...');
 
     //initializing the project and install dependencies
     await execa('npm', ['init', '-y'], { cwd: projectDir });
     await execa('npm', ['install', 'express', 'dotenv'], { cwd: projectDir });
     await execa('npm', ['install', '-D', 'typescript', '@types/node', '@types/express', 'ts-node'], { cwd: projectDir });
-    
+    // await execa('npm', ['install', 'mongoose'], { cwd: projectDir });
+      if (database === 'MongoDB') {
+      await execa(
+        'npm',
+        ['install', 'mongoose'],
+        { cwd: projectDir }
+      );
+    }
+      if (database === 'MySql') {
+      await execa(
+        'npm',
+        ['install', 'mysql2'],
+        { cwd: projectDir }
+      );
+    }
     // Create tsconfig.json
     const tsConfig = {
       compilerOptions: {
@@ -55,6 +69,51 @@ console.log(\`Server is running at http://localhost:\${port}\`);
   `.trim()
     );
 
+      let connectionContent = '';
+
+    if (database === 'MongoDB') {
+      connectionContent = `
+import mongoose from 'mongoose';
+
+export const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI!);
+
+    console.log('MongoDB Connected Successfully');
+  } catch (error) {
+    console.error('MongoDB Connection Failed:', error);
+    process.exit(1);
+  }
+};
+`;
+    }
+
+    if (database === 'MySql') {
+      connectionContent = `
+import mysql from 'mysql2/promise';
+
+export const pool = mysql.createPool({
+  host: process.env.DB_HOST,
+  port: Number(process.env.DB_PORT),
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+});
+
+export const connectDB = async () => {
+  try {
+    const connection = await pool.getConnection();
+
+    console.log('MySQL Connected Successfully');
+
+    connection.release();
+  } catch (error) {
+    console.error('MySQL Connection Failed:', error);
+    process.exit(1);
+  }
+};
+`;
+    }
     fs.writeFileSync(
       path.join(srcDir, 'routes', 'index.ts'),
       `
@@ -72,6 +131,7 @@ export default Router().use('/api', api);
       fs.writeFileSync(path.join(srcDir, 'constants', 'constants.ts'), ''),
       fs.writeFileSync(path.join(srcDir, 'database', 'connection.ts'), ''),
       fs.writeFileSync(path.join(srcDir, 'models', 'example.model.ts'), ''),
+      
 
       console.log(`Express + TypeScript project structure created successfully in "${projectDir}"`);
   }

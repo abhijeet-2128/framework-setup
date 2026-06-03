@@ -3,9 +3,12 @@ import fs from 'fs';
 import path from 'path';
 import inquirer from 'inquirer';
 import MyExpress from './express.js'
+import MyKoa from './koa.js'
+import MyHapi from './hapi.js'
+import MyNest from './nest.js';
 
 async function setupFramework() {
-  const { framework, projectName } = await inquirer.prompt([
+  const { framework, projectName, database } = await inquirer.prompt([
     {
       type: 'list',
       name: 'framework',
@@ -40,13 +43,13 @@ async function setupFramework() {
       await new MyExpress().setupExpress(projectDir);
       break;
     case 'Koa':
-      await setupKoa(projectDir);
+      await new MyKoa().setupKoa(projectDir,database);
       break;
     case 'Hapi':
-      await setupHapi(projectDir);
+      await new MyHapi().setupHapi(projectDir, database);
       break;
     case 'Nest':
-      await setupNest(projectDir);
+      await new MyNest().setupNest(projectDir,database);
       break;
     default:
       console.log('Invalid framework selection.');
