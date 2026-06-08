@@ -70,12 +70,12 @@ class MyKoa {
       path.join(projectDir, 'tsconfig.json'),
       JSON.stringify(tsConfig, null, 2)
     );
-  fs.writeFileSync(
-      path.join(projectDir, '.env'),
-      `PORT=3000
-       MONGO_URI=mongodb://localhost:27017/mydb
-     `.trim()
-    );
+  // fs.writeFileSync(
+  //     path.join(projectDir, '.env'),
+  //     `PORT=3000
+  //      MONGO_URI=mongodb://localhost:27017/mydb
+  //    `.trim()
+  //   );
       fs.writeFileSync(
       path.join(projectDir, '.gitignore'),
       `
@@ -84,6 +84,29 @@ class MyKoa {
       .env
       `.trim()
     );
+       // .env
+    let envContent = `PORT=3000`;
+    
+    if (database === 'MongoDB') {
+      envContent += `
+    
+    MONGO_URI=mongodb://localhost:27017/mydb`;
+        }
+    
+    if (database === 'MySql') {
+      envContent += `
+    
+    DB_HOST=localhost
+    DB_PORT=3306
+    DB_USER=root
+    DB_PASSWORD=password
+    DB_NAME=mydb`;
+        }
+    
+        fs.writeFileSync(
+          path.join(projectDir, '.env'),
+          envContent
+        );
     // Folder structure
     const srcDir = path.join(projectDir, 'src');
 

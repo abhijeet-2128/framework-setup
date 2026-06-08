@@ -69,8 +69,8 @@ console.log(\`Server is running at http://localhost:\${port}\`);
   `.trim()
     );
 
-      let connectionContent = '';
-
+  let connectionContent = '';
+   // Database connection file
     if (database === 'MongoDB') {
       connectionContent = `
 import mongoose from 'mongoose';
@@ -114,6 +114,35 @@ export const connectDB = async () => {
 };
 `;
     }
+
+    fs.writeFileSync(
+      path.join(srcDir, 'database', 'connection.ts'),
+      connectionContent.trim()
+    );
+
+       // .env
+    let envContent = `PORT=3000`;
+    
+    if (database === 'MongoDB') {
+          envContent += `
+    
+    MONGO_URI=mongodb://localhost:27017/mydb`;
+        }
+    
+        if (database === 'MySql') {
+          envContent += `
+    
+    DB_HOST=localhost
+    DB_PORT=3306
+    DB_USER=root
+    DB_PASSWORD=password
+    DB_NAME=mydb`;
+        }
+    
+    fs.writeFileSync(
+      path.join(projectDir, '.env'),
+      envContent
+    );
     fs.writeFileSync(
       path.join(srcDir, 'routes', 'index.ts'),
       `
@@ -129,7 +158,6 @@ export default Router().use('/api', api);
       fs.writeFileSync(path.join(srcDir, 'utils', 'helper.ts'), ''),
       fs.writeFileSync(path.join(srcDir, 'middlewares', 'auth.middleware.ts'), ''),
       fs.writeFileSync(path.join(srcDir, 'constants', 'constants.ts'), ''),
-      fs.writeFileSync(path.join(srcDir, 'database', 'connection.ts'), ''),
       fs.writeFileSync(path.join(srcDir, 'models', 'example.model.ts'), ''),
       
 
