@@ -43,13 +43,13 @@ async function setupFramework() {
       await new MyExpress().setupExpress(projectDir, database);
       break;
     case 'Koa':
-      await new MyKoa().setupKoa(projectDir,database);
+      await new MyKoa().setupKoa(projectDir, database);
       break;
     case 'Hapi':
       await new MyHapi().setupHapi(projectDir, database);
       break;
     case 'Nest':
-      await new MyNest().setupNest(projectDir,database);
+      await new MyNest().setupNest(projectDir, database);
       break;
     default:
       console.log('Invalid framework selection.');
@@ -57,7 +57,7 @@ async function setupFramework() {
   }
 
 
-  console.log(`\nProject setup for ${framework} is complete!`);
+  console.log(`\nProject setup for ${framework} with ${database} is complete!`);
   console.log(`Navigate to the "${projectName}" directory to get started.`);
 }
 

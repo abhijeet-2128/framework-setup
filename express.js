@@ -11,14 +11,14 @@ class MyExpress {
     await execa('npm', ['install', 'express', 'dotenv'], { cwd: projectDir });
     await execa('npm', ['install', '-D', 'typescript', '@types/node', '@types/express', 'ts-node'], { cwd: projectDir });
     // await execa('npm', ['install', 'mongoose'], { cwd: projectDir });
-      if (database === 'MongoDB') {
+    if (database === 'MongoDB') {
       await execa(
         'npm',
         ['install', 'mongoose'],
         { cwd: projectDir }
       );
     }
-      if (database === 'MySql') {
+    if (database === 'MySql') {
       await execa(
         'npm',
         ['install', 'mysql2'],
@@ -48,29 +48,54 @@ class MyExpress {
     folders.forEach((folder) => fs.mkdirSync(path.join(srcDir, folder)));
 
     // Create basic files
-    fs.writeFileSync(
-      path.join(srcDir, 'index.ts'),
+//     fs.writeFileSync(
+//       path.join(srcDir, 'server.ts'),
+//       `
+// import express from 'express';
+// import dotenv from 'dotenv';
+// import routes from './routes'
+// dotenv.config();
+
+// const app = express();
+// const port = process.env.PORT || 3000;
+
+// app.use(express.json());
+// app.use(routes);
+// app.use(express.urlencoded({ extended: true }));
+
+// app.listen(port, () => {
+// console.log(\`Server is running at http://localhost:\${port}\`);
+// });
+//   `.trim()
+//     );
+
+  fs.writeFileSync(
+      path.join(srcDir, 'server.ts'),
       `
-import express from 'express';
-import dotenv from 'dotenv';
-import routes from './routes'
-dotenv.config();
+import 'module-alias/register';
+import { config } from "@config";
+import { logger } from '@logger';
+import { IDENTIFIER } from '@enum';
 
-const app = express();
-const port = process.env.PORT || 3000;
-
-app.use(express.json());
-app.use(routes);
-app.use(express.urlencoded({ extended: true }));
-
-app.listen(port, () => {
-console.log(\`Server is running at http://localhost:\${port}\`);
-});
+(async () => {
+    logger.info('identifier ${process.env.IDENTIFIER}');
+    await config.loadCreds(<IDENTIFIER>process.env.IDENTIFIER);
+    try {
+        const { utils } = await import('@utils');
+        await utils.constructSwaggerSchema();
+        await utils.validateLocaleFolder();
+        const app = await import("./src/bootstrap/bootstrap")
+        new app.Bootstrap();
+    } catch (error) {
+        logger.error(error)
+        throw error
+    }
+})();
   `.trim()
     );
 
-  let connectionContent = '';
-   // Database connection file
+    let connectionContent = '';
+    // Database connection file
     if (database === 'MongoDB') {
       connectionContent = `
 import mongoose from 'mongoose';
@@ -120,25 +145,25 @@ export const connectDB = async () => {
       connectionContent.trim()
     );
 
-       // .env
+    // .env
     let envContent = `PORT=3000`;
-    
+
     if (database === 'MongoDB') {
-          envContent += `
+      envContent += `
     
     MONGO_URI=mongodb://localhost:27017/mydb`;
-        }
-    
-        if (database === 'MySql') {
-          envContent += `
+    }
+
+    if (database === 'MySql') {
+      envContent += `
     
     DB_HOST=localhost
     DB_PORT=3306
     DB_USER=root
     DB_PASSWORD=password
     DB_NAME=mydb`;
-        }
-    
+    }
+
     fs.writeFileSync(
       path.join(projectDir, '.env'),
       envContent
@@ -159,7 +184,6 @@ export default Router().use('/api', api);
       fs.writeFileSync(path.join(srcDir, 'middlewares', 'auth.middleware.ts'), ''),
       fs.writeFileSync(path.join(srcDir, 'constants', 'constants.ts'), ''),
       fs.writeFileSync(path.join(srcDir, 'models', 'example.model.ts'), ''),
-      
 
       console.log(`Express + TypeScript project structure created successfully in "${projectDir}"`);
   }

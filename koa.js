@@ -31,7 +31,7 @@ class MyKoa {
       { cwd: projectDir }
     );
 
-      const packageJsonPath = path.join(
+    const packageJsonPath = path.join(
       projectDir,
       'package.json'
     );
@@ -70,13 +70,13 @@ class MyKoa {
       path.join(projectDir, 'tsconfig.json'),
       JSON.stringify(tsConfig, null, 2)
     );
-  // fs.writeFileSync(
-  //     path.join(projectDir, '.env'),
-  //     `PORT=3000
-  //      MONGO_URI=mongodb://localhost:27017/mydb
-  //    `.trim()
-  //   );
-      fs.writeFileSync(
+    // fs.writeFileSync(
+    //     path.join(projectDir, '.env'),
+    //     `PORT=3000
+    //      MONGO_URI=mongodb://localhost:27017/mydb
+    //    `.trim()
+    //   );
+    fs.writeFileSync(
       path.join(projectDir, '.gitignore'),
       `
       node_modules
@@ -84,15 +84,15 @@ class MyKoa {
       .env
       `.trim()
     );
-       // .env
+    // .env
     let envContent = `PORT=3000`;
-    
+
     if (database === 'MongoDB') {
       envContent += `
     
     MONGO_URI=mongodb://localhost:27017/mydb`;
-        }
-    
+    }
+
     if (database === 'MySql') {
       envContent += `
     
@@ -101,12 +101,12 @@ class MyKoa {
     DB_USER=root
     DB_PASSWORD=password
     DB_NAME=mydb`;
-        }
-    
-        fs.writeFileSync(
-          path.join(projectDir, '.env'),
-          envContent
-        );
+    }
+
+    fs.writeFileSync(
+      path.join(projectDir, '.env'),
+      envContent
+    );
     // Folder structure
     const srcDir = path.join(projectDir, 'src');
 
@@ -153,7 +153,7 @@ app.listen(PORT, () => {
     );
 
     // routes/index.ts
-       fs.writeFileSync(
+    fs.writeFileSync(
       path.join(srcDir, 'routes', 'index.ts'),
       `
 import Router from '@koa/router';
@@ -211,11 +211,11 @@ export default router;
 
     let connectionFileContent = '';
 
-if (database === 'MongoDB') {
-  await execa('npm', ['install', 'mongoose'], {
-  cwd: projectDir
-});
-  connectionFileContent = `
+    if (database === 'MongoDB') {
+      await execa('npm', ['install', 'mongoose'], {
+        cwd: projectDir
+      });
+      connectionFileContent = `
 import mongoose from 'mongoose';
 
 export const connectDB = async () => {
@@ -228,11 +228,11 @@ export const connectDB = async () => {
   }
 };
 `;
-} else if (database === 'MySql') {
-  await execa('npm', ['install', 'mysql2'], {
-  cwd: projectDir
-});
-  connectionFileContent = `
+    } else if (database === 'MySql') {
+      await execa('npm', ['install', 'mysql2'], {
+        cwd: projectDir
+      });
+      connectionFileContent = `
 import mysql from 'mysql2/promise';
 
 export const pool = mysql.createPool({
@@ -256,12 +256,12 @@ export const connectDB = async () => {
   }
 };
 `;
-}
+    }
 
-fs.writeFileSync(
-  path.join(srcDir, 'database', 'connection.ts'),
-  connectionFileContent.trim()
-);
+    fs.writeFileSync(
+      path.join(srcDir, 'database', 'connection.ts'),
+      connectionFileContent.trim()
+    );
     fs.writeFileSync(
       path.join(srcDir, 'models', 'example.model.ts'),
       ''

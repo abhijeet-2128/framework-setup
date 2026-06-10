@@ -38,6 +38,27 @@ PORT=3000
 MONGO_URI=mongodb://localhost:27017/mydb
 `.trim()
       );
+      fs.writeFileSync(
+        path.join(projectDir, 'src', 'app.module.ts'),
+        `
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+
+    MongooseModule.forRoot(
+      process.env.MONGO_URI!,
+    ),
+  ],
+})
+export class AppModule {}
+`.trim()
+      );
     }
 
     if (database === 'MySql') {
@@ -62,6 +83,35 @@ DB_PORT=3306
 DB_USER=root
 DB_PASSWORD=password
 DB_NAME=mydb
+`.trim()
+      );
+
+      fs.writeFileSync(
+        path.join(projectDir, 'src', 'app.module.ts'),
+        `
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: process.env.DB_HOST,
+      port: Number(process.env.DB_PORT),
+      username: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+      synchronize: true,
+      autoLoadEntities: true,
+    }),
+  ],
+})
+export class AppModule {}
 `.trim()
       );
     }
