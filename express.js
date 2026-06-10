@@ -48,49 +48,24 @@ class MyExpress {
     folders.forEach((folder) => fs.mkdirSync(path.join(srcDir, folder)));
 
     // Create basic files
-//     fs.writeFileSync(
-//       path.join(srcDir, 'server.ts'),
-//       `
-// import express from 'express';
-// import dotenv from 'dotenv';
-// import routes from './routes'
-// dotenv.config();
-
-// const app = express();
-// const port = process.env.PORT || 3000;
-
-// app.use(express.json());
-// app.use(routes);
-// app.use(express.urlencoded({ extended: true }));
-
-// app.listen(port, () => {
-// console.log(\`Server is running at http://localhost:\${port}\`);
-// });
-//   `.trim()
-//     );
-
-  fs.writeFileSync(
+    fs.writeFileSync(
       path.join(srcDir, 'server.ts'),
       `
-import 'module-alias/register';
-import { config } from "@config";
-import { logger } from '@logger';
-import { IDENTIFIER } from '@enum';
+import express from 'express';
+import dotenv from 'dotenv';
+import routes from './routes'
+dotenv.config();
 
-(async () => {
-    logger.info('identifier ${process.env.IDENTIFIER}');
-    await config.loadCreds(<IDENTIFIER>process.env.IDENTIFIER);
-    try {
-        const { utils } = await import('@utils');
-        await utils.constructSwaggerSchema();
-        await utils.validateLocaleFolder();
-        const app = await import("./src/bootstrap/bootstrap")
-        new app.Bootstrap();
-    } catch (error) {
-        logger.error(error)
-        throw error
-    }
-})();
+const app = express();
+const port = process.env.PORT || 3000;
+
+app.use(express.json());
+app.use(routes);
+app.use(express.urlencoded({ extended: true }));
+
+app.listen(port, () => {
+console.log(\`Server is running at http://localhost:\${port}\`);
+});
   `.trim()
     );
 
