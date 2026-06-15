@@ -49,7 +49,7 @@ class MyExpress {
 
     // Create basic files
     fs.writeFileSync(
-      path.join(srcDir, 'server.ts'),
+      path.join(srcDir, 'index.ts'),
       `
 import express from 'express';
 import dotenv from 'dotenv';
@@ -60,7 +60,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(routes);
+app.use('/api', routes);
 app.use(express.urlencoded({ extended: true }));
 
 app.listen(port, () => {
@@ -146,9 +146,17 @@ export const connectDB = async () => {
     fs.writeFileSync(
       path.join(srcDir, 'routes', 'index.ts'),
       `
-import { Router } from "express";
-const api = Router().use();
-export default Router().use('/api', api);
+import { Router } from 'express';
+
+const router = Router();
+
+router.get('/', (req, res) => {
+  res.json({
+    message: 'API is working'
+  });
+});
+
+export default router;
   `.trim()
     );
 
